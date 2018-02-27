@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Travels</title>
+  </head>
+  <body>
+    <a href="/travels/logout">Logout</a>
+
+    <h1>Hello, {{ user_name.name }}</h1>
+
+    <h2>Your Trip Schedules</h2>
+    <table>
+      <tr>
+        <th>Destination</th>
+        <th>Travel Start Date</th>
+        <th>Travel End Date</th>
+        <th>Plan</th>
+      </tr>
+        {% for trip in user_trips %}
+        <tr>
+            <td>
+              <form action="/travels/destination" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="trip_id" value="{{trip.id}}">
+                <input type="submit" name="" value="{{trip.destination}}">
+              </form>
+            </td>
+            <td>{{ trip.start_date|date:"Y-m-d" }}</td>
+            <td>{{ trip.end_date|date:"Y-m-d" }}</td>
+            <td>{{ trip.description }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p></p>
+    <p></p>
+    <h2>Other User's Travel Plans</h2>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Destination</th>
+        <th>Travel Start Date</th>
+        <th>Travel End Date</th>
+        <th>Do You Want to Join?</th>
+      </tr>
+        {% for trip in users_data %}
+          <tr>
+            <td>{{ trip.users.first.name }}</td>#needs to get the user that generated this destination
+            <td>
+              <form action="/travels/destination" method="post">
+                 {% csrf_token %}
+                <input type="hidden" name="trip_id" value="{{ trip.id}}">
+                <input type="submit" name="" value="{{trip.destination}}">
+              </form>
+            </td>
+            <!-- {{ trip.destination }} -->
+            <td>{{ trip.start_date|date:"Y-m-d" }}</td>
+            <td>{{ trip.end_date|date:"Y-m-d" }}</td>
+            <td>
+              <form action="/travels/join" method="post">
+                 {% csrf_token %}
+                <input type="hidden" name="trip_id" value="{{trip.id}}">
+                <input type="submit" name="" value="Join">
+              </form>
+            </td>
+
+            <!-- <td>{{ OTHERS.JOINOPT}}</td> needs rework-->
+          </tr>
+        {% endfor %}
+    </table>
+
+    <a href="add">Add Travel Plan</a>
+
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </body>
+</html>
